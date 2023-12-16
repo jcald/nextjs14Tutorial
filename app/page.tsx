@@ -34,7 +34,10 @@ export default function Page() {
           </Link>
           <Link
             href="/dashboard"
-            className="flex items-center gap-5 self-start rounded-lg bg-red-700-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-red-400 md:text-base"
+            // className="flex items-center gap-5 self-start rounded-lg bg-red-700 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-red-400 md:text-base"
+            className="flex items-center focus:outline-none gap-5 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+
+          // className="flex items-center text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
           >
             <span>Dashboard</span> <FolderIcon className="w-5 md:w-6" />
           </Link>
