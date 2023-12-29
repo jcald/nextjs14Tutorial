@@ -3,11 +3,12 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "lint": "next lint",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "seed": "node -r dotenv/config ./scripts/seed.js",
-    "updatePass": "node -r dotenv/config ./scripts/updatePass.js",
-    "start": "next start"
+    "start": "next start",
+    "updatePass": "node -r dotenv/config ./scripts/updatePass.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
