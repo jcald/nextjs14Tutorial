@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -58,10 +60,11 @@ export async function createInvoice(prevState: State, formData: FormData) {
 
   // Insert data into the database
   try {
-    await sql`
+    const result = await sql`
       INSERT INTO invoices (customer_id, amount, status, date)
       VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
     `;
+    console.log(`createInvoice saliendo sin error:\n, ${JSON.stringify(result, null, 2)}`);
   } catch (error) {
     // If a database error occurs, return a more specific error.
     return {
@@ -98,13 +101,16 @@ export async function updateInvoice(
   const amountInCents = amount * 100;
 
   try {
-    await sql`
+    console.log(`id: ${id}  customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}`);
+
+    const result = await sql`
       UPDATE invoices
       SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
       WHERE id = ${id}
     `;
-    console.log(`updateInvoice saliendo sin error: ${status}`);
+    console.log(`updateInvoice saliendo sin error:\n, ${JSON.stringify(result, null, 2)}`);
   } catch (error) {
+    console.error('Database Error:', error);
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
 
@@ -115,13 +121,32 @@ export async function updateInvoice(
 export async function deleteInvoice(id: string) {
   //throw new Error('Failed to Delete Invoice');
   try {
-    console.log("delete id", id);
-    await sql`DELETE FROM invoices WHERE id = ${id}`;
-    console.log("eror wn sql delete");
+    const result = await sql`DELETE FROM invoices WHERE id = ${id}`;
+    console.log(`updateInvoice saliendo sin error:\n, ${JSON.stringify(result, null, 2)}`);
 
     revalidatePath('/dashboard/invoices');
     return { message: 'Deleted Invoice.' };
   } catch (error) {
+    console.error('Database Error:', error);
     return { message: 'Database Error: Failed to Delete Invoice.' };
+  }
+}
+
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
   }
 }
