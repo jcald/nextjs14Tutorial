@@ -102,7 +102,6 @@ export async function updateInvoice(
 
   try {
     console.log(`id: ${id}  customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}`);
-
     const result = await sql`
       UPDATE invoices
       SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
@@ -122,7 +121,7 @@ export async function deleteInvoice(id: string) {
   //throw new Error('Failed to Delete Invoice');
   try {
     const result = await sql`DELETE FROM invoices WHERE id = ${id}`;
-    console.log(`updateInvoice saliendo sin error:\n, ${JSON.stringify(result, null, 2)}`);
+    console.log(`deleteInvoice saliendo sin error:\n, ${JSON.stringify(result, null, 2)}`);
 
     revalidatePath('/dashboard/invoices');
     return { message: 'Deleted Invoice.' };
