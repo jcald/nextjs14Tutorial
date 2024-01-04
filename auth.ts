@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { sql } from '@vercel/postgres';
 import { z } from 'zod';
 import type { User } from '@/app/lib/definitions';
+import logger from "./app/lib/logger";
 import { authConfig } from './auth.config';
 
 async function getUser(email: string): Promise<User | undefined> {
@@ -25,6 +26,7 @@ export const { auth, signIn, signOut } = NextAuth({
           .object({ email: z.string().email(), password: z.string().min(6) })
           .safeParse(credentials);
 
+        logger.error(`auth.js - parsedCredentials:\n, ${JSON.stringify(parsedCredentials, null, 2)}`);
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
 
@@ -33,9 +35,11 @@ export const { auth, signIn, signOut } = NextAuth({
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
           if (passwordsMatch) return user;
+        } else {
+          logger.error(parsedCredentials.error);
         }
 
-        console.log('Invalid credentials');
+        logger.error('Invalid credentials');
         return null;
       },
     }),
